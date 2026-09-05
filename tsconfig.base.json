@@ -4,7 +4,7 @@
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
@@ -13,15 +13,18 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
     "paths": {
-      "@ng-microfrontend/api-client": ["libs/shared/api-client/src/index.ts"],
-      "@ng-microfrontend/auth-data-access": [
-        "libs/shared/auth-data-access/src/index.ts"
+      "@ng-microfrontend/api-client": [
+        "./libs/shared/api-client/src/index.ts"
       ],
-      "@ng-microfrontend/models": ["libs/shared/models/src/index.ts"],
-      "@ng-microfrontend/ui": ["libs/shared/ui/src/index.ts"],
-      "@ng-microfrontend/util-config": ["libs/shared/util-config/src/index.ts"]
+      "@ng-microfrontend/auth-data-access": [
+        "./libs/shared/auth-data-access/src/index.ts"
+      ],
+      "@ng-microfrontend/models": ["./libs/shared/models/src/index.ts"],
+      "@ng-microfrontend/ui": ["./libs/shared/ui/src/index.ts"],
+      "@ng-microfrontend/util-config": [
+        "./libs/shared/util-config/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
