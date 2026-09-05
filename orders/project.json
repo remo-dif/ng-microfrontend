@@ -1,0 +1,92 @@
+{
+  "name": "orders",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "orders/src",
+  "tags": ["scope:orders", "type:app"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/orders",
+        "browser": "orders/src/main.ts",
+        "polyfills": ["zone.js", "es-module-shims"],
+        "tsConfig": "orders/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "orders/public"
+          }
+        ],
+        "styles": ["orders/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "orders:build:production"
+        },
+        "development": {
+          "buildTarget": "orders:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "federation-build": { "executor": "@angular-architects/native-federation:build", "outputs": ["{workspaceRoot}/dist/orders/browser"], "options": { "target": "orders:build:production" } },
+    "federation-serve": { "continuous": true, "executor": "@angular-architects/native-federation:build", "options": { "target": "orders:serve:development", "dev": true, "port": 4203, "rebuildDelay": 500 } },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n",
+      "options": {
+        "buildTarget": "orders:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "orders/jest.config.ts",
+        "tsConfig": "orders/tsconfig.spec.json"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "orders:build",
+        "staticFilePath": "dist/orders/browser",
+        "spa": true
+      }
+    }
+  }
+}

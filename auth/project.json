@@ -1,0 +1,92 @@
+{
+  "name": "auth",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "auth/src",
+  "tags": ["scope:auth", "type:app"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/auth",
+        "browser": "auth/src/main.ts",
+        "polyfills": ["zone.js", "es-module-shims"],
+        "tsConfig": "auth/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "auth/public"
+          }
+        ],
+        "styles": ["auth/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "auth:build:production"
+        },
+        "development": {
+          "buildTarget": "auth:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "federation-build": { "executor": "@angular-architects/native-federation:build", "outputs": ["{workspaceRoot}/dist/auth/browser"], "options": { "target": "auth:build:production" } },
+    "federation-serve": { "continuous": true, "executor": "@angular-architects/native-federation:build", "options": { "target": "auth:serve:development", "dev": true, "port": 4201, "rebuildDelay": 500 } },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n",
+      "options": {
+        "buildTarget": "auth:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "auth/jest.config.ts",
+        "tsConfig": "auth/tsconfig.spec.json"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "auth:build",
+        "staticFilePath": "dist/auth/browser",
+        "spa": true
+      }
+    }
+  }
+}

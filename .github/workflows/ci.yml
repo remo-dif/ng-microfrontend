@@ -1,0 +1,58 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+  NX_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Start distributed Nx Cloud run
+        if: env.NX_CLOUD_ACCESS_TOKEN != ''
+        run: npx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e"
+      - run: npx nx affected -t lint,build,federation-build --base=$NX_BASE --head=$NX_HEAD --parallel=3
+      - run: npx nx affected -t test --base=$NX_BASE --head=$NX_HEAD --parallel=3 --configuration=ci
+      - run: npx nx e2e shell-e2e
+
+  deploy:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    needs: quality
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [auth, products, orders, profile, admin, shell]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - run: npm ci
+      - name: Build and deploy affected micro-frontend
+        env:
+          APP: ${{ matrix.app }}
+          S3_BUCKETS_JSON: ${{ secrets.S3_BUCKETS_JSON }}
+          CLOUDFRONT_DISTRIBUTIONS_JSON: ${{ secrets.CLOUDFRONT_DISTRIBUTIONS_JSON }}
+          MFE_ORIGIN: ${{ vars.MFE_ORIGIN }}
+        run: bash tools/deploy-app.sh "$APP" "$NX_BASE" "$NX_HEAD"

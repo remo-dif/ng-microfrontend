@@ -1,0 +1,92 @@
+{
+  "name": "profile",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "profile/src",
+  "tags": ["scope:profile", "type:app"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/profile",
+        "browser": "profile/src/main.ts",
+        "polyfills": ["zone.js", "es-module-shims"],
+        "tsConfig": "profile/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "profile/public"
+          }
+        ],
+        "styles": ["profile/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "profile:build:production"
+        },
+        "development": {
+          "buildTarget": "profile:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "federation-build": { "executor": "@angular-architects/native-federation:build", "outputs": ["{workspaceRoot}/dist/profile/browser"], "options": { "target": "profile:build:production" } },
+    "federation-serve": { "continuous": true, "executor": "@angular-architects/native-federation:build", "options": { "target": "profile:serve:development", "dev": true, "port": 4204, "rebuildDelay": 500 } },
+    "extract-i18n": {
+      "executor": "@angular/build:extract-i18n",
+      "options": {
+        "buildTarget": "profile:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "profile/jest.config.ts",
+        "tsConfig": "profile/tsconfig.spec.json"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "profile:build",
+        "staticFilePath": "dist/profile/browser",
+        "spa": true
+      }
+    }
+  }
+}

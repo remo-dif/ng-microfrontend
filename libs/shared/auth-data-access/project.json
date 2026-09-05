@@ -1,0 +1,21 @@
+{
+  "name": "auth-data-access",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/auth-data-access/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:data-access"],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/shared/auth-data-access/jest.config.ts",
+        "tsConfig": "libs/shared/auth-data-access/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+<lib-platform-header
+  [authenticated]="auth.authenticated()"
+  [admin]="auth.isAdmin()"
+  (signOut)="signOut()"
+/>
+<main class="page"><router-outlet /></main>
