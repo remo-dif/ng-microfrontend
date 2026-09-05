@@ -44,7 +44,7 @@ jobs:
       - run: npx playwright test --config apps/shell-e2e/playwright.config.ts --project=chromium
 
   deploy:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && vars.AWS_DEPLOY_ENABLED == 'true'
     needs: quality
     strategy:
       fail-fast: false

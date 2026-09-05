@@ -184,6 +184,7 @@ Required GitHub configuration includes:
 | `AWS_DEPLOY_ROLE_ARN` | Secret | GitHub OIDC role assumed by the workflow |
 | `S3_BUCKETS_JSON` | Secret | Maps application names to buckets |
 | `CLOUDFRONT_DISTRIBUTIONS_JSON` | Secret | Maps applications to distributions |
+| `AWS_DEPLOY_ENABLED` | Variable | Set to `true` only after AWS deployment configuration is complete |
 | `AWS_REGION` | Variable | AWS deployment region |
 | `MFE_ORIGIN` | Variable | Public origin used in the generated manifest |
 
@@ -275,4 +276,3 @@ A change requires coordinated review when it modifies:
 - S3 upload order and CloudFront cache headers are correctness concerns, not merely performance tuning.
 - Client guards never replace API authorization.
 - Independent deployment requires independent observability, compatibility checks, and ownership—not only separate build commands.
-
