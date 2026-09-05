@@ -11,8 +11,6 @@ permissions:
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  NX_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-  NX_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   quality:
@@ -20,15 +18,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
+      - name: Determine affected range
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            base="${{ github.event.pull_request.base.sha }}"
+          else
+            base="${{ github.event.before }}"
+            if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+              base="$(git hash-object -t tree /dev/null)"
+            fi
+          fi
+          echo "NX_BASE=$base" >> "$GITHUB_ENV"
+          echo "NX_HEAD=${{ github.event.pull_request.head.sha || github.sha }}" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
       - name: Start distributed Nx Cloud run
         if: env.NX_CLOUD_ACCESS_TOKEN != ''
         run: npx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e"
       - run: npx nx affected -t lint,build,federation-build --base=$NX_BASE --head=$NX_HEAD --parallel=3
       - run: npx nx affected -t test --base=$NX_BASE --head=$NX_HEAD --parallel=3 --configuration=ci
-      - run: npx nx e2e shell-e2e
+      - run: npx playwright test --config apps/shell-e2e/playwright.config.ts --project=chromium
 
   deploy:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -42,6 +55,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
+      - name: Determine affected range
+        shell: bash
+        run: |
+          base="${{ github.event.before }}"
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base="$(git hash-object -t tree /dev/null)"
+          fi
+          echo "NX_BASE=$base" >> "$GITHUB_ENV"
+          echo "NX_HEAD=${{ github.sha }}" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - uses: aws-actions/configure-aws-credentials@v4

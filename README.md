@@ -20,4 +20,4 @@ Run the remaining remotes on ports 4201–4205 as listed in [the architecture gu
 - `npm run e2e` — Playwright shell journey
 - `npm run graph` — inspect project dependencies and affected boundaries
 
-The demo JWT is not a production identity implementation. Read [docs/architecture.md](docs/architecture.md) before connecting an identity provider or deploying.
+The demo JWT is not a production identity implementation. Read the canonical [architecture guide](ARCHITECTURE.md) before connecting an identity provider or deploying. A shorter overview remains in [docs/architecture.md](docs/architecture.md).
