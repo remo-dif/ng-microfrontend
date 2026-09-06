@@ -31,14 +31,14 @@ Keep domain-specific code inside its remote. Promote code to `shared` only when 
 Use Node 22 (`nvm use`; see `.nvmrc`), then:
 
 ```bash
-npm ci
-npm run build:mfes
-npx nx run auth:federation-serve
-npx nx run products:federation-serve
-npx nx run orders:federation-serve
-npx nx run profile:federation-serve
-npx nx run admin:federation-serve
-npx nx run shell:federation-serve
+pnpm install --frozen-lockfile
+pnpm build:mfes
+pnpm nx run auth:federation-serve
+pnpm nx run products:federation-serve
+pnpm nx run orders:federation-serve
+pnpm nx run profile:federation-serve
+pnpm nx run admin:federation-serve
+pnpm nx run shell:federation-serve
 ```
 
 The committed manifest targets localhost. `tools/generate-federation-manifest.mjs` rewrites it for deployment from `MFE_ORIGIN`.

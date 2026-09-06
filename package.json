@@ -2,6 +2,7 @@
   "name": "@ng-microfrontend/source",
   "version": "0.0.0",
   "license": "MIT",
+  "packageManager": "pnpm@11.25.0",
   "scripts": {
     "start": "nx run-many -t federation-serve --projects=auth,products,orders,profile,admin,shell --parallel=6",
     "build": "nx run-many -t build --all",
@@ -14,7 +15,7 @@
   },
   "engines": {
     "node": ">=20.19 <23",
-    "npm": ">=10"
+    "pnpm": ">=11"
   },
   "private": true,
   "dependencies": {

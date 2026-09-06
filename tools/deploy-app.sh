@@ -5,13 +5,13 @@ app="${1:?app is required}"
 base="${2:?base SHA is required}"
 head="${3:?head SHA is required}"
 
-if ! npx nx show projects --affected --base="$base" --head="$head" | grep -qx "$app"; then
+if ! pnpm nx show projects --affected --base="$base" --head="$head" | grep -qx "$app"; then
   echo "$app is unaffected; skipping deployment"
   exit 0
 fi
 
 if [[ "$app" == "shell" ]]; then node tools/generate-federation-manifest.mjs; fi
-npx nx run "$app:federation-build"
+pnpm nx run "$app:federation-build"
 
 bucket="$(node -e "process.stdout.write(JSON.parse(process.env.S3_BUCKETS_JSON)[process.env.APP] || '')")"
 distribution="$(node -e "process.stdout.write(JSON.parse(process.env.CLOUDFRONT_DISTRIBUTIONS_JSON)[process.env.APP] || '')")"

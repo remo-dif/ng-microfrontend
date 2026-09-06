@@ -31,17 +31,18 @@ jobs:
           fi
           echo "NX_BASE=$base" >> "$GITHUB_ENV"
           echo "NX_HEAD=${{ github.event.pull_request.head.sha || github.sha }}" >> "$GITHUB_ENV"
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
-      - run: npm ci
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
       - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
       - name: Start distributed Nx Cloud run
         if: env.NX_CLOUD_ACCESS_TOKEN != ''
-        run: npx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e"
-      - run: npx nx affected -t lint,build,federation-build --base=$NX_BASE --head=$NX_HEAD --parallel=3
-      - run: npx nx affected -t test --base=$NX_BASE --head=$NX_HEAD --parallel=3 --configuration=ci
-      - run: npx playwright test --config apps/shell-e2e/playwright.config.ts --project=chromium
+        run: pnpm exec nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e"
+      - run: pnpm nx affected -t lint,build,federation-build --base=$NX_BASE --head=$NX_HEAD --parallel=3
+      - run: pnpm nx affected -t test --base=$NX_BASE --head=$NX_HEAD --parallel=3 --configuration=ci
+      - run: pnpm exec playwright test --config apps/shell-e2e/playwright.config.ts --project=chromium
 
   deploy:
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && vars.AWS_DEPLOY_ENABLED == 'true'
@@ -64,13 +65,14 @@ jobs:
           fi
           echo "NX_BASE=$base" >> "$GITHUB_ENV"
           echo "NX_HEAD=${{ github.sha }}" >> "$GITHUB_ENV"
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
+        with: { node-version: 22, cache: pnpm }
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
       - name: Build and deploy affected micro-frontend
         env:
           APP: ${{ matrix.app }}

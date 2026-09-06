@@ -130,18 +130,18 @@ Use the Node version declared in `.nvmrc`, then install from the lockfile:
 
 ```bash
 nvm use
-npm ci
+pnpm install --frozen-lockfile
 ```
 
 Each application can run independently:
 
 ```bash
-npx nx run auth:federation-serve
-npx nx run products:federation-serve
-npx nx run orders:federation-serve
-npx nx run profile:federation-serve
-npx nx run admin:federation-serve
-npx nx run shell:federation-serve
+pnpm nx run auth:federation-serve
+pnpm nx run products:federation-serve
+pnpm nx run orders:federation-serve
+pnpm nx run profile:federation-serve
+pnpm nx run admin:federation-serve
+pnpm nx run shell:federation-serve
 ```
 
 The committed development manifest points the shell to localhost ports 4201–4205. Production builds use `federation-build`; `tools/generate-federation-manifest.mjs` creates deployment URLs from `MFE_ORIGIN`.
@@ -149,10 +149,10 @@ The committed development manifest points the shell to localhost ports 4201–42
 Useful validation commands are:
 
 ```bash
-npm run build:mfes
-npm test
-npm run e2e
-npm run graph
+pnpm build:mfes
+pnpm test
+pnpm e2e
+pnpm graph
 ```
 
 ## Testing strategy

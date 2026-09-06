@@ -1,10 +1,11 @@
 FROM node:22-alpine AS build
 WORKDIR /workspace
-COPY package*.json ./
-RUN npm ci
+RUN corepack enable
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY . .
 ARG APP=shell
-RUN npx nx run ${APP}:federation-build
+RUN pnpm nx run ${APP}:federation-build
 
 FROM nginx:1.27-alpine
 ARG OUTPUT_PATH=dist/apps/shell/browser
