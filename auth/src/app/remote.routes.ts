@@ -11,23 +11,7 @@ import { AuthStore } from '@ng-microfrontend/auth-data-access';
 @Component({
   imports: [ReactiveFormsModule],
   templateUrl: './login-page.html',
-  styles: [
-    `
-      form,
-      label {
-        display: grid;
-        gap: 0.75rem;
-      }
-      input {
-        padding: 0.75rem;
-        max-width: 24rem;
-      }
-      button {
-        width: max-content;
-        padding: 0.65rem 1rem;
-      }
-    `,
-  ],
+  styleUrl: './login-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class LoginPage {
