@@ -18,8 +18,12 @@ export class AuthStore {
 
   readonly token = this.tokenState.asReadonly();
   readonly user = this.userState.asReadonly();
-  readonly authenticated = computed(() => this.tokenState() !== null && this.userState() !== null);
-  readonly isAdmin = computed(() => this.userState()?.roles.includes('admin') ?? false);
+  readonly authenticated = computed(
+    () => this.tokenState() !== null && this.userState() !== null
+  );
+  readonly isAdmin = computed(
+    () => this.userState()?.roles.includes('admin') ?? false
+  );
 
   constructor() {
     this.restoreSession();
@@ -53,7 +57,10 @@ export class AuthStore {
   }
 
   private restoreSession(): void {
-    const token = typeof sessionStorage === 'undefined' ? null : sessionStorage.getItem(TOKEN_KEY);
+    const token =
+      typeof sessionStorage === 'undefined'
+        ? null
+        : sessionStorage.getItem(TOKEN_KEY);
     if (token) this.establishSession({ accessToken: token });
   }
 
@@ -61,13 +68,29 @@ export class AuthStore {
     try {
       const encodedPayload = token.split('.')[1];
       if (!encodedPayload) return null;
-      const base64 = encodedPayload.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(encodedPayload.length / 4) * 4, '=');
+      const base64 = encodedPayload
+        .replace(/-/g, '+')
+        .replace(/_/g, '/')
+        .padEnd(Math.ceil(encodedPayload.length / 4) * 4, '=');
       const json = decodeURIComponent(
-        Array.from(atob(base64), (character) => `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`).join(''),
+        Array.from(
+          atob(base64),
+          (character) =>
+            `%${character.charCodeAt(0).toString(16).padStart(2, '0')}`
+        ).join('')
       );
       const claims = JSON.parse(json) as Partial<JwtClaims>;
-      const roles = claims.roles?.filter((role): role is Role => role === 'customer' || role === 'admin');
-      if (!claims.sub || !claims.email || !claims.exp || claims.exp * 1000 <= Date.now() || !roles?.length) return null;
+      const roles = claims.roles?.filter(
+        (role): role is Role => role === 'customer' || role === 'admin'
+      );
+      if (
+        !claims.sub ||
+        !claims.email ||
+        !claims.exp ||
+        claims.exp * 1000 <= Date.now() ||
+        !roles?.length
+      )
+        return null;
 
       return {
         id: claims.sub,

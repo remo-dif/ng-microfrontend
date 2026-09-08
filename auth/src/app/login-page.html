@@ -1,0 +1,10 @@
+<section class="card">
+  <h1>Sign in</h1>
+  <p>Demo: any valid email. Add <code>+admin</code> for the admin role.</p>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label
+      >Email <input type="email" formControlName="email" autocomplete="email"
+    /></label>
+    <button [disabled]="form.invalid" type="submit">Continue</button>
+  </form>
+</section>

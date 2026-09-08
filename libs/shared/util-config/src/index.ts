@@ -5,7 +5,9 @@ export interface PlatformConfig {
   readonly production: boolean;
 }
 
-export const PLATFORM_CONFIG = new InjectionToken<PlatformConfig>('PLATFORM_CONFIG');
+export const PLATFORM_CONFIG = new InjectionToken<PlatformConfig>(
+  'PLATFORM_CONFIG'
+);
 
 export const defaultPlatformConfig: PlatformConfig = {
   apiBaseUrl: '/api',

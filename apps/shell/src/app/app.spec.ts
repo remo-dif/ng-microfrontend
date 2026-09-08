@@ -4,7 +4,10 @@ import { App } from './app';
 
 describe('App', () => {
   it('creates the composition shell', async () => {
-    await TestBed.configureTestingModule({ imports: [App], providers: [provideRouter([])] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [App],
+      providers: [provideRouter([])],
+    }).compileComponents();
     expect(TestBed.createComponent(App).componentInstance).toBeTruthy();
   });
 });

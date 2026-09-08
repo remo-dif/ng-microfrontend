@@ -1,0 +1,14 @@
+<header class="header">
+  <a class="brand" routerLink="/">Northstar</a>
+  <nav aria-label="Primary navigation">
+    <a routerLink="/products" routerLinkActive="active">Products</a>
+    <a routerLink="/orders" routerLinkActive="active">Orders</a>
+    <a routerLink="/profile" routerLinkActive="active">Profile</a>
+    @if (admin()) { <a routerLink="/admin" routerLinkActive="active">Admin</a> }
+  </nav>
+  @if (authenticated()) {
+  <button type="button" (click)="signOut.emit()">Sign out</button>
+  } @else {
+  <a class="button" routerLink="/login">Sign in</a>
+  }
+</header>
